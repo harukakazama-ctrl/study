@@ -1495,44 +1495,60 @@
             ctx.restore();
         }
 
-        // たてがみを描画（Lv.4以上）
+        // たてがみを描画（Lv.4以上）- 三角形のギザギザ
         function drawMane(x, y, headSize, baseColor, level) {
             if (level < 4) return;
             
-            // レベルに応じてたてがみの長さが増える
-            const maneLength = (level - 3) * 8;  // Lv4=8, Lv5=16, Lv6=24...
-            const maneCount = 8 + (level - 4) * 2;  // 房の数も増える
+            // レベルに応じてたてがみの長さと数が増える
+            const maneLength = (level - 3) * 12;  // Lv4=12, Lv5=24, Lv6=36...
+            const maneCount = 10 + (level - 4) * 3;  // ギザギザの数
             
             ctx.save();
             
             // たてがみの色（少し濃いめ）
-            const maneColor = darkenColor(baseColor, 10);
+            const maneColor = darkenColor(baseColor, 15);
+            const maneColorLight = darkenColor(baseColor, 5);
             
-            // 頭の周りにたてがみを描画
+            // 頭の周りにギザギザの三角形を描画
             for (let i = 0; i < maneCount; i++) {
-                const angle = (Math.PI * 0.3) + (Math.PI * 1.4 / maneCount) * i;  // 上部から両サイドにかけて
-                const startX = x + Math.cos(angle) * headSize * 0.9;
-                const startY = y + Math.sin(angle) * headSize * 0.85;
+                const angle = (Math.PI * 0.2) + (Math.PI * 1.6 / maneCount) * i;  // 上部から両サイドにかけて
                 
-                // 各房のゆらぎ
-                const wave = Math.sin(Date.now() / 800 + i) * 3;
-                const length = maneLength + Math.sin(i * 0.7) * 5;
+                // 各三角形のゆらぎ
+                const wave = Math.sin(Date.now() / 1000 + i * 0.5) * 2;
                 
-                // たてがみの房を描画
+                // 三角形のサイズ（交互に大きさを変える）
+                const sizeVariation = (i % 2 === 0) ? 1.0 : 0.7;
+                const triLength = (maneLength + Math.sin(i * 0.8) * 8) * sizeVariation;
+                const triWidth = (8 + (level - 4) * 3) * sizeVariation;  // 三角形の幅
+                
+                // 三角形の頂点を計算
+                const baseX = x + Math.cos(angle) * headSize * 0.85;
+                const baseY = y + Math.sin(angle) * headSize * 0.8;
+                
+                // 三角形の先端
+                const tipX = baseX + Math.cos(angle) * triLength + wave;
+                const tipY = baseY + Math.sin(angle) * triLength;
+                
+                // 三角形の両側の点
+                const perpAngle = angle + Math.PI / 2;
+                const leftX = baseX + Math.cos(perpAngle) * triWidth;
+                const leftY = baseY + Math.sin(perpAngle) * triWidth;
+                const rightX = baseX - Math.cos(perpAngle) * triWidth;
+                const rightY = baseY - Math.sin(perpAngle) * triWidth;
+                
+                // 三角形を描画
                 ctx.beginPath();
-                ctx.moveTo(startX, startY);
+                ctx.moveTo(leftX, leftY);
+                ctx.lineTo(tipX, tipY);
+                ctx.lineTo(rightX, rightY);
+                ctx.closePath();
                 
-                const endX = startX + Math.cos(angle + 0.2) * length + wave;
-                const endY = startY + Math.sin(angle + 0.3) * length * 1.2;
-                const ctrlX = startX + Math.cos(angle) * length * 0.6 + wave * 0.5;
-                const ctrlY = startY + Math.sin(angle) * length * 0.8;
-                
-                ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
-                
-                ctx.strokeStyle = maneColor;
-                ctx.lineWidth = 4 + (level - 4) * 0.5;  // レベルで太さも増える
-                ctx.lineCap = 'round';
-                ctx.stroke();
+                // グラデーションで立体感
+                const gradient = ctx.createLinearGradient(baseX, baseY, tipX, tipY);
+                gradient.addColorStop(0, maneColorLight);
+                gradient.addColorStop(1, maneColor);
+                ctx.fillStyle = gradient;
+                ctx.fill();
             }
             
             ctx.restore();
