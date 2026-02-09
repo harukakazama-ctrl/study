@@ -2,21 +2,54 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#e0f0f5">
+    <meta name="apple-mobile-web-app-title" content="猫暮らし">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
     <title>猫暮らし</title>
     <style>
         /* ============================================
            基本スタイル & カスタムプロパティ
+           Apple Human Interface Guidelines準拠
         ============================================ */
         :root {
-            --bg-primary: #1a1a2e;
-            --bg-secondary: #16213e;
-            --accent-pink: #ff6b9d;
-            --accent-blue: #4ecdc4;
-            --accent-yellow: #ffe66d;
-            --accent-purple: #a855f7;
-            --text-light: #e8e8e8;
-            --text-muted: #a0a0a0;
+            /* SVGイラスト風カラーパレット */
+            --bg-primary: #f0faf8;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e7eaee;
+            --accent-mint: #64FCD9;
+            --accent-orange: #FFB61D;
+            --accent-pink: #ffb6c1;
+            --accent-blue: #64b5f6;
+            --accent-green: #64FCD9;
+            --accent-red: #ff6b6b;
+            --line-color: #00160A;
+            --text-primary: #00160A;
+            --text-secondary: #3c4a43;
+            --text-tertiary: #8e9e93;
+            --shadow-color: #e7eaee;
+            --separator: rgba(0, 22, 10, 0.12);
+            
+            /* アニメーション */
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* ダークモード対応 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #000000;
+                --bg-secondary: #1c1c1e;
+                --bg-tertiary: #2c2c2e;
+                --text-primary: #ffffff;
+                --text-secondary: #ebebf5;
+                --text-tertiary: #8e8e93;
+                --separator: rgba(84, 84, 88, 0.6);
+            }
         }
 
         * {
@@ -26,13 +59,29 @@
         }
 
         body {
-            font-family: 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
-            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            /* Apple推奨のシステムフォント */
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+            /* Dynamic Type対応 */
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            background: linear-gradient(135deg, #e8faf6 0%, #d4f5ed 100%);
             min-height: 100vh;
+            min-height: -webkit-fill-available; /* iOS Safari対応 */
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            /* タッチ操作の最適化 */
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            /* セーフエリア対応 */
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         /* ============================================
@@ -43,20 +92,20 @@
             max-width: 480px;
             height: 100vh;
             max-height: 800px;
-            background: linear-gradient(180deg, #2d1b4e 0%, #1a1a2e 50%, #0f3460 100%);
+            background: linear-gradient(180deg, #f0fdf9 0%, #e0f8f2 50%, #d4f2ea 100%);
             border-radius: 20px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 15px;
             box-shadow: 
-                0 0 60px rgba(168, 85, 247, 0.3),
-                inset 0 0 120px rgba(78, 205, 196, 0.05);
+                0 0 60px rgba(100, 252, 217, 0.25),
+                inset 0 0 120px rgba(255, 255, 255, 0.4);
             position: relative;
             overflow: hidden;
         }
 
-        /* 背景の星アニメーション */
+        /* 背景のキラキラアニメーション */
         .game-container::before {
             content: '';
             position: absolute;
@@ -65,11 +114,11 @@
             right: 0;
             bottom: 0;
             background-image: 
-                radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.3), transparent),
-                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.2), transparent),
-                radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.4), transparent),
-                radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.2), transparent),
-                radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.3), transparent);
+                radial-gradient(2px 2px at 20px 30px, rgba(255,200,150,0.4), transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,220,180,0.3), transparent),
+                radial-gradient(1px 1px at 90px 40px, rgba(255,180,120,0.5), transparent),
+                radial-gradient(2px 2px at 130px 80px, rgba(255,200,150,0.3), transparent),
+                radial-gradient(1px 1px at 160px 120px, rgba(255,220,180,0.4), transparent);
             background-repeat: repeat;
             background-size: 200px 150px;
             animation: twinkle 4s ease-in-out infinite;
@@ -77,8 +126,8 @@
         }
 
         @keyframes twinkle {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
         }
 
         /* ============================================
@@ -94,27 +143,26 @@
         .title {
             font-size: 1.4rem;
             font-weight: bold;
-            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple));
+            background: linear-gradient(90deg, #e07050, #c06040);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
         }
 
         .level-badge {
-            background: linear-gradient(135deg, var(--accent-yellow), #ff9f43);
-            color: #1a1a2e;
-            padding: 8px 16px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, #64FCD9, #4de8c5);
+            color: #00160A;
+            padding: 5px 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 15px rgba(255, 230, 109, 0.4);
+            font-size: 0.85rem;
+            box-shadow: 0 2px 8px rgba(100, 252, 217, 0.4);
         }
 
         .sound-btn {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.05);
             border: none;
-            color: var(--text-light);
+            color: #666;
             font-size: 1.3rem;
             width: 40px;
             height: 40px;
@@ -127,7 +175,7 @@
         }
 
         .sound-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.1);
             transform: scale(1.1);
         }
 
@@ -139,6 +187,29 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .datetime-display {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            background: rgba(100, 252, 217, 0.2);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(100, 252, 217, 0.3);
+        }
+
+        .date-text {
+            color: #00160A;
+            font-weight: 500;
+        }
+
+        .time-text {
+            color: #00160A;
+            font-weight: bold;
+            font-feature-settings: "tnum";
+            font-variant-numeric: tabular-nums;
         }
 
         /* ============================================
@@ -158,21 +229,34 @@
         }
 
         .status-icon {
-            font-size: 1.2rem;
-            width: 30px;
+            font-size: 1.1rem;
+            width: 24px;
             text-align: center;
         }
 
+        .icon-hunger {
+            color: #ff7b6b;
+        }
+
+        .icon-happy {
+            color: #ff8fa0;
+        }
+
+        .icon-energy {
+            color: #7bc96b;
+        }
+
         .status-label {
-            color: var(--text-muted);
+            color: #666;
             font-size: 0.8rem;
-            width: 50px;
+            width: 65px;
+            font-weight: bold;
         }
 
         .status-track {
             flex: 1;
             height: 12px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.08);
             border-radius: 6px;
             overflow: hidden;
             position: relative;
@@ -201,7 +285,7 @@
         .status-fill.energy { background: linear-gradient(90deg, #6bcb77, #4ade80); }
 
         .status-value {
-            color: var(--text-light);
+            color: #444;
             font-size: 0.8rem;
             width: 35px;
             text-align: right;
@@ -232,47 +316,67 @@
             z-index: 1;
         }
 
-        .pet-name {
-            font-size: 1.3rem;
-            color: var(--text-light);
-            font-weight: bold;
+        .pet-name-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 5px;
         }
 
+        .pet-name {
+            font-size: 1.3rem;
+            color: #00160A;
+            font-weight: bold;
+        }
+
         .pet-message {
-            color: var(--accent-blue);
+            color: #FFB61D;
             font-size: 0.9rem;
             min-height: 1.2em;
             transition: opacity 0.3s ease;
         }
 
         /* ============================================
-           アクションボタン
+           アクションボタン（HIG準拠）
+           - タッチターゲット: 最小44x44pt
+           - 角丸: iOS標準の12-16pt
         ============================================ */
         .action-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
             z-index: 1;
-            padding-bottom: 10px;
+            padding: 8px 0 10px;
         }
 
         .action-btn {
             flex: 1;
-            max-width: 120px;
-            padding: 15px 10px;
+            max-width: 110px;
+            /* HIG: 最小タッチターゲット 44x44pt */
+            min-height: 64px;
+            min-width: 64px;
+            padding: 12px 8px;
             border: none;
-            border-radius: 15px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            /* HIG: iOS標準の角丸 */
+            border-radius: 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            /* HIG: スムーズなアニメーション */
+            transition: transform 0.15s var(--ease-out-expo), 
+                        box-shadow 0.15s var(--ease-out-expo),
+                        opacity 0.1s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            justify-content: center;
+            gap: 4px;
             position: relative;
             overflow: hidden;
+            /* HIG: タップ時のフィードバック準備 */
+            -webkit-appearance: none;
+            appearance: none;
         }
 
         .action-btn::before {
@@ -282,32 +386,41 @@
             left: 0;
             right: 0;
             height: 50%;
-            background: linear-gradient(180deg, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(180deg, rgba(255,255,255,0.25), transparent);
             pointer-events: none;
+            border-radius: 16px 16px 0 0;
         }
 
-        .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
+        /* HIG: タップ時のフィードバック */
         .action-btn:active {
-            transform: translateY(0);
+            transform: scale(0.96);
+            opacity: 0.9;
+        }
+
+        /* PC用ホバー（タッチデバイスでは無効化） */
+        @media (hover: hover) {
+            .action-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            }
+            .action-btn:active {
+                transform: scale(0.98);
+            }
         }
 
         .btn-feed {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
-            color: white;
+            background: linear-gradient(135deg, #FFB61D, #f5a623);
+            color: #00160A;
         }
 
         .btn-pet {
-            background: linear-gradient(135deg, #ffd93d, #f9c846);
-            color: #1a1a2e;
+            background: linear-gradient(135deg, #ffb6c1, #ffa0ab);
+            color: #00160A;
         }
 
         .btn-play {
-            background: linear-gradient(135deg, #6bcb77, #4ade80);
-            color: #1a1a2e;
+            background: linear-gradient(135deg, #64FCD9, #4de8c5);
+            color: #00160A;
         }
 
         .btn-icon {
@@ -324,23 +437,149 @@
         .exp-label {
             display: flex;
             justify-content: space-between;
-            color: var(--text-muted);
+            color: #666;
             font-size: 0.75rem;
             margin-bottom: 5px;
         }
 
         .exp-track {
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.08);
             border-radius: 4px;
             overflow: hidden;
         }
 
         .exp-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink));
+            background: linear-gradient(90deg, #64FCD9, #FFB61D);
             border-radius: 4px;
             transition: width 0.5s ease;
+        }
+
+        /* ============================================
+           モバイル対応 - レスポンシブデザイン
+        ============================================ */
+        
+        /* 小さいスマホ（iPhone SE など） */
+        @media screen and (max-height: 600px) {
+            .game-container {
+                padding: 10px;
+                gap: 8px;
+            }
+            .title { font-size: 1.1rem; }
+            .level-badge { padding: 3px 8px; font-size: 0.75rem; }
+            .status-item { padding: 6px 10px; }
+            .status-label { font-size: 0.65rem; }
+            .status-value { font-size: 0.7rem; }
+            .canvas-container { flex: 1; min-height: 180px; }
+            .pet-name { font-size: 1rem; }
+            .pet-message { font-size: 0.75rem; min-height: 35px; }
+            .action-btn { padding: 10px 8px; font-size: 0.8rem; }
+            .btn-icon { font-size: 1.2rem; }
+            .exp-label { font-size: 0.65rem; }
+        }
+        
+        /* 中くらいのスマホ */
+        @media screen and (max-height: 700px) and (min-height: 601px) {
+            .game-container {
+                padding: 12px;
+                gap: 10px;
+            }
+            .title { font-size: 1.2rem; }
+            .canvas-container { flex: 1; min-height: 200px; }
+            .pet-message { min-height: 40px; }
+            .action-btn { padding: 12px 10px; }
+        }
+
+        /* 横向き対応 */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .game-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                padding: 8px;
+                gap: 8px;
+                max-width: 100%;
+                max-height: 100vh;
+            }
+            .header { width: 100%; }
+            .status-container {
+                width: 30%;
+                flex-direction: column;
+            }
+            .canvas-container {
+                width: 40%;
+                min-height: 150px;
+            }
+            .pet-info { width: 100%; }
+            .action-buttons { width: 25%; flex-direction: column; gap: 5px; }
+            .action-btn { max-width: 100%; padding: 8px; }
+            .exp-container { width: 100%; }
+        }
+        
+        /* タッチデバイス用ホバー無効化 */
+        @media (hover: none) {
+            .action-btn:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            .action-btn:active {
+                transform: scale(0.95);
+            }
+            .sound-btn:hover {
+                background: rgba(0, 0, 0, 0.05);
+                transform: none;
+            }
+            .sound-btn:active {
+                transform: scale(0.9);
+            }
+        }
+
+        /* 大きい画面（タブレット・PC） */
+        @media screen and (min-width: 768px) {
+            .game-container {
+                border-radius: 30px;
+                max-width: 480px;
+            }
+        }
+
+        /* ノッチ付きiPhone対応 */
+        /* ノッチ付きiPhone対応 */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .game-container {
+                padding-top: max(15px, env(safe-area-inset-top));
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            }
+        }
+
+        /* HIG: モーション軽減設定対応（アクセシビリティ） */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .game-container::before {
+                animation: none;
+            }
+        }
+
+        /* HIG: ハイコントラストモード対応 */
+        @media (prefers-contrast: more) {
+            .action-btn {
+                border: 2px solid currentColor;
+            }
+            .status-item {
+                border: 1px solid var(--separator);
+            }
+        }
+
+        /* HIG: フォーカス表示（キーボードナビゲーション） */
+        .action-btn:focus-visible,
+        .sound-btn:focus-visible {
+            outline: 3px solid var(--accent-blue);
+            outline-offset: 2px;
         }
     </style>
 </head>
@@ -348,25 +587,27 @@
     <div class="game-container">
         <!-- ヘッダー -->
         <div class="header">
-            <div class="title">🐱 猫暮らし</div>
+            <div class="datetime-display" id="datetimeDisplay">
+                <div class="date-text" id="dateText"></div>
+                <div class="time-text" id="timeText"></div>
+            </div>
             <div class="header-right">
                 <button class="sound-btn" id="soundBtn" title="BGM ON/OFF">🔇</button>
-                <div class="level-badge" id="levelBadge">Lv.1</div>
             </div>
         </div>
 
         <!-- ステータスバー -->
         <div class="status-container">
             <div class="status-bar">
-                <span class="status-icon">🍖</span>
-                <span class="status-label">満腹</span>
+                <span class="status-icon">🍙</span>
+                <span class="status-label">おなか</span>
                 <div class="status-track">
                     <div class="status-fill hunger" id="hungerBar" style="width: 100%"></div>
                 </div>
                 <span class="status-value" id="hungerValue">100</span>
             </div>
             <div class="status-bar">
-                <span class="status-icon">💖</span>
+                <span class="status-icon icon-happy">♥</span>
                 <span class="status-label">ごきげん</span>
                 <div class="status-track">
                     <div class="status-fill happy" id="happyBar" style="width: 100%"></div>
@@ -374,8 +615,8 @@
                 <span class="status-value" id="happyValue">100</span>
             </div>
             <div class="status-bar">
-                <span class="status-icon">⚡</span>
-                <span class="status-label">体力</span>
+                <span class="status-icon icon-energy">★</span>
+                <span class="status-label">げんき</span>
                 <div class="status-track">
                     <div class="status-fill energy" id="energyBar" style="width: 100%"></div>
                 </div>
@@ -390,7 +631,10 @@
 
         <!-- ペット情報 -->
         <div class="pet-info">
-            <div class="pet-name" id="petName">たま</div>
+            <div class="pet-name-row">
+                <span class="pet-name" id="petName">たま</span>
+                <span class="level-badge" id="levelBadge">Lv.1</span>
+            </div>
             <div class="pet-message" id="petMessage">ごきげんだよ！</div>
         </div>
 
@@ -405,18 +649,24 @@
             </div>
         </div>
 
-        <!-- アクションボタン -->
-        <div class="action-buttons">
-            <button class="action-btn btn-feed" id="btnFeed">
-                <span class="btn-icon">🍖</span>
+        <!-- アクションボタン（HIG: アクセシビリティ対応） -->
+        <div class="action-buttons" role="group" aria-label="ペットのお世話ボタン">
+            <button class="action-btn btn-feed" id="btnFeed" 
+                    aria-label="ごはんをあげる" 
+                    tabindex="0">
+                <span class="btn-icon" aria-hidden="true">🍖</span>
                 <span>ごはん</span>
             </button>
-            <button class="action-btn btn-pet" id="btnPet">
-                <span class="btn-icon">🤚</span>
+            <button class="action-btn btn-pet" id="btnPet" 
+                    aria-label="なでる" 
+                    tabindex="0">
+                <span class="btn-icon" aria-hidden="true">🤚</span>
                 <span>なでる</span>
             </button>
-            <button class="action-btn btn-play" id="btnPlay">
-                <span class="btn-icon">🎾</span>
+            <button class="action-btn btn-play" id="btnPlay" 
+                    aria-label="遊ぶ" 
+                    tabindex="0">
+                <span class="btn-icon" aria-hidden="true">🎾</span>
                 <span>あそぶ</span>
             </button>
         </div>
@@ -450,6 +700,50 @@
         // ============================================
         const canvas = document.getElementById('petCanvas');
         const ctx = canvas.getContext('2d');
+        
+        // ============================================
+        // キャンバスのリサイズ対応
+        // ============================================
+        // 論理サイズを保存（描画時に使用）
+        let canvasLogicalWidth = 440;
+        let canvasLogicalHeight = 350;
+        
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const rect = container.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            
+            // コンテナのサイズに合わせてキャンバスを設定
+            canvasLogicalWidth = Math.min(rect.width, 440);
+            canvasLogicalHeight = Math.min(rect.height, 350);
+            
+            // 高解像度ディスプレイ対応
+            canvas.width = canvasLogicalWidth * dpr;
+            canvas.height = canvasLogicalHeight * dpr;
+            canvas.style.width = canvasLogicalWidth + 'px';
+            canvas.style.height = canvasLogicalHeight + 'px';
+            
+            // スケーリング
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            
+            // 雪を再初期化
+            if (typeof initSnow === 'function') {
+                initSnow();
+            }
+        }
+        
+        // リサイズイベント（デバウンス付き）
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(resizeCanvas, 100);
+        });
+        
+        // 画面の向きが変わった時
+        window.addEventListener('orientationchange', () => {
+            setTimeout(resizeCanvas, 200);
+        });
+        
         const elements = {
             hungerBar: document.getElementById('hungerBar'),
             hungerValue: document.getElementById('hungerValue'),
@@ -471,28 +765,13 @@
             const { level, hunger, happy, energy, actionAnimation } = gameState;
             const avgStatus = (hunger + happy + energy) / 3;
             
-            // レベルに応じた基本色とサイズ
-            let baseColor, accentColor, earInnerColor, evolutionStage;
+            // レベルに応じた見た目の変化（白猫ベース）
+            let baseColor, accentColor, earInnerColor;
             
-            if (level >= 10) {
-                // 最終形態：神秘的な白猫
-                evolutionStage = 3;
-                baseColor = '#f8f0ff';
-                accentColor = '#e8d8f8';
-                earInnerColor = '#ffb6c1';
-            } else if (level >= 5) {
-                // 第二形態：グレーの猫
-                evolutionStage = 2;
-                baseColor = '#b8c5d6';
-                accentColor = '#9aacbf';
-                earInnerColor = '#ffb6c1';
-            } else {
-                // 初期形態：オレンジの子猫
-                evolutionStage = 1;
-                baseColor = '#ffb347';
-                accentColor = '#ff9933';
-                earInnerColor = '#ffb6c1';
-            }
+            // 白猫の基本色（純白）
+            baseColor = '#ffffff';
+            accentColor = '#f8f8f8';
+            earInnerColor = '#ffb6c1';
             
             // アクション中は専用の表情
             let expression;
@@ -502,6 +781,10 @@
                 expression = 'petted';     // 気持ちいい
             } else if (actionAnimation === 'play') {
                 expression = 'playing';    // わくわく
+            } else if (happy <= 0) {
+                expression = 'sad';        // ごきげんゼロ→悲しい
+            } else if (hunger <= 0) {
+                expression = 'hungry';     // おなかゼロ→お腹空いた
             } else if (avgStatus >= 80) {
                 expression = 'happy';      // 元気いっぱい
             } else if (avgStatus >= 50) {
@@ -512,82 +795,145 @@
                 expression = 'sad';        // 悲しい
             }
             
-            return { baseColor, accentColor, earInnerColor, expression, evolutionStage };
+            return { baseColor, accentColor, earInnerColor, expression, level };
+        }
+
+        // ============================================
+        // 雪のパーティクル
+        // ============================================
+        const snowflakes = [];
+        const SNOWFLAKE_COUNT = 60;
+        
+        // 雪の初期化
+        function initSnow() {
+            for (let i = 0; i < SNOWFLAKE_COUNT; i++) {
+                snowflakes.push({
+                    x: Math.random() * canvasLogicalWidth,
+                    y: Math.random() * canvasLogicalHeight,
+                    radius: Math.random() * 3 + 1,
+                    speed: Math.random() * 1 + 0.5,
+                    wind: Math.random() * 0.5 - 0.25,
+                    opacity: Math.random() * 0.5 + 0.3
+                });
+            }
+        }
+        initSnow();
+        
+        // 雪を更新・描画
+        function drawSnow() {
+            snowflakes.forEach(flake => {
+                // 描画
+                ctx.beginPath();
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
+                ctx.fill();
+                
+                // 更新
+                flake.y += flake.speed;
+                flake.x += flake.wind + Math.sin(Date.now() / 1000 + flake.x) * 0.3;
+                
+                // 画面外に出たらリセット
+                if (flake.y > canvasLogicalHeight) {
+                    flake.y = -5;
+                    flake.x = Math.random() * canvasLogicalWidth;
+                }
+                if (flake.x > canvasLogicalWidth) {
+                    flake.x = 0;
+                } else if (flake.x < 0) {
+                    flake.x = canvasLogicalWidth;
+                }
+            });
         }
 
         // ============================================
         // 背景を描画する関数（日本家屋の縁側）
         // ============================================
         function drawBackground() {
-            const w = canvas.width;
-            const h = canvas.height;
+            const w = canvasLogicalWidth;
+            const h = canvasLogicalHeight;
             
-            // 空のグラデーション
+            // 空のグラデーション（ミントグリーン系）
             const skyGradient = ctx.createLinearGradient(0, 0, 0, h * 0.5);
-            skyGradient.addColorStop(0, '#87CEEB');
-            skyGradient.addColorStop(0.5, '#B0E0E6');
-            skyGradient.addColorStop(1, '#E0F4FF');
+            skyGradient.addColorStop(0, '#b8f0e8');
+            skyGradient.addColorStop(0.5, '#d4f5ed');
+            skyGradient.addColorStop(1, '#e8faf6');
             ctx.fillStyle = skyGradient;
             ctx.fillRect(0, 0, w, h * 0.5);
             
-            // 太陽
+            // 薄いドットパターン（背景全体）- ミントグリーン系
+            ctx.fillStyle = 'rgba(100, 252, 217, 0.12)';
+            const dotSpacing = 12;
+            const dotRadius = 1.5;
+            for (let x = 0; x < w; x += dotSpacing) {
+                for (let y = 0; y < h; y += dotSpacing) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, dotRadius, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+            
+            // 冬の曇り空（太陽は雲の後ろ）
             ctx.beginPath();
             ctx.arc(w * 0.8, h * 0.15, 25, 0, Math.PI * 2);
-            const sunGradient = ctx.createRadialGradient(w * 0.8, h * 0.15, 0, w * 0.8, h * 0.15, 30);
-            sunGradient.addColorStop(0, '#FFFACD');
-            sunGradient.addColorStop(0.7, '#FFE4B5');
-            sunGradient.addColorStop(1, 'rgba(255, 228, 181, 0)');
+            const sunGradient = ctx.createRadialGradient(w * 0.8, h * 0.15, 0, w * 0.8, h * 0.15, 40);
+            sunGradient.addColorStop(0, 'rgba(255, 255, 240, 0.6)');
+            sunGradient.addColorStop(0.5, 'rgba(255, 255, 240, 0.3)');
+            sunGradient.addColorStop(1, 'rgba(255, 255, 240, 0)');
             ctx.fillStyle = sunGradient;
             ctx.fill();
             
-            // 日差しの光線
-            ctx.save();
-            ctx.globalAlpha = 0.3;
-            for (let i = 0; i < 8; i++) {
-                ctx.beginPath();
-                ctx.moveTo(w * 0.8, h * 0.15);
-                const angle = (i / 8) * Math.PI * 2 + Date.now() / 5000;
-                ctx.lineTo(w * 0.8 + Math.cos(angle) * 45, h * 0.15 + Math.sin(angle) * 45);
-                ctx.strokeStyle = '#FFD700';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-            ctx.restore();
+            // 雲
+            ctx.fillStyle = 'rgba(220, 230, 240, 0.7)';
+            ctx.beginPath();
+            ctx.arc(w * 0.2, h * 0.1, 25, 0, Math.PI * 2);
+            ctx.arc(w * 0.25, h * 0.08, 20, 0, Math.PI * 2);
+            ctx.arc(w * 0.3, h * 0.1, 22, 0, Math.PI * 2);
+            ctx.fill();
             
-            // 庭（芝生）
+            ctx.beginPath();
+            ctx.arc(w * 0.7, h * 0.12, 20, 0, Math.PI * 2);
+            ctx.arc(w * 0.75, h * 0.1, 18, 0, Math.PI * 2);
+            ctx.arc(w * 0.8, h * 0.12, 22, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 庭（雪が積もった地面）
             const gardenGradient = ctx.createLinearGradient(0, h * 0.35, 0, h * 0.55);
-            gardenGradient.addColorStop(0, '#90C060');
-            gardenGradient.addColorStop(1, '#70A040');
+            gardenGradient.addColorStop(0, '#e8eff5');
+            gardenGradient.addColorStop(1, '#d8e5ed');
             ctx.fillStyle = gardenGradient;
             ctx.fillRect(0, h * 0.35, w, h * 0.2);
             
-            // 庭石
+            // 雪の積もり方（波状）
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
             ctx.beginPath();
-            ctx.ellipse(w * 0.2, h * 0.48, 20, 10, 0.1, 0, Math.PI * 2);
-            ctx.fillStyle = '#888';
-            ctx.fill();
-            ctx.beginPath();
-            ctx.ellipse(w * 0.75, h * 0.45, 15, 8, -0.2, 0, Math.PI * 2);
-            ctx.fillStyle = '#777';
+            ctx.moveTo(0, h * 0.38);
+            for (let i = 0; i <= w; i += 15) {
+                const snowY = Math.sin(i * 0.08) * 4 + h * 0.38;
+                ctx.lineTo(i, snowY);
+            }
+            ctx.lineTo(w, h * 0.55);
+            ctx.lineTo(0, h * 0.55);
+            ctx.closePath();
             ctx.fill();
             
-            // 小さな花
-            const flowers = [
-                { x: w * 0.1, y: h * 0.42, color: '#FF6B6B' },
-                { x: w * 0.15, y: h * 0.46, color: '#FFE66D' },
-                { x: w * 0.85, y: h * 0.43, color: '#FF6B9D' },
-                { x: w * 0.9, y: h * 0.47, color: '#FFF' },
-            ];
-            flowers.forEach(f => {
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, 4, 0, Math.PI * 2);
-                ctx.fillStyle = f.color;
-                ctx.fill();
-                ctx.beginPath();
-                ctx.arc(f.x, f.y, 2, 0, Math.PI * 2);
-                ctx.fillStyle = '#FFD700';
-                ctx.fill();
-            });
+            // 庭石（雪をかぶっている）
+            ctx.beginPath();
+            ctx.ellipse(w * 0.2, h * 0.48, 20, 10, 0.1, 0, Math.PI * 2);
+            ctx.fillStyle = '#778';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(w * 0.2, h * 0.46, 15, 5, 0.1, 0, Math.PI);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(w * 0.75, h * 0.45, 15, 8, -0.2, 0, Math.PI * 2);
+            ctx.fillStyle = '#667';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(w * 0.75, h * 0.43, 12, 4, -0.2, 0, Math.PI);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
             
             // 縁側の屋根の影
             ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
@@ -668,9 +1014,9 @@
             ctx.fillRect(0, shoujiY + 8, w, shoujiH - 8);
             ctx.restore();
             
-            // 縁側に落ちる日差し
+            // 縁側に落ちる日差し（冬は薄く）
             ctx.save();
-            ctx.globalAlpha = 0.2;
+            ctx.globalAlpha = 0.1;
             ctx.beginPath();
             ctx.moveTo(w * 0.4, engawaY);
             ctx.lineTo(w * 0.9, engawaY);
@@ -683,6 +1029,21 @@
             ctx.fillStyle = sunlightGradient;
             ctx.fill();
             ctx.restore();
+            
+            // 雪を描画
+            drawSnow();
+            
+            // 縁側に積もった雪
+            ctx.beginPath();
+            ctx.moveTo(0, engawaY);
+            for (let i = 0; i <= w; i += 20) {
+                const snowHeight = Math.sin(i * 0.05) * 3 + 5;
+                ctx.lineTo(i, engawaY - snowHeight);
+            }
+            ctx.lineTo(w, engawaY);
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
         }
 
         // ============================================
@@ -693,15 +1054,15 @@
             const appearance = getPetAppearance();
             
             // キャンバスをクリア＆背景描画
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.clearRect(0, 0, canvasLogicalWidth, canvasLogicalHeight);
             drawBackground();
             
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height * 0.72;  // 縁側の位置に調整
-            const { baseColor, accentColor, earInnerColor, expression, evolutionStage } = appearance;
+            const centerX = canvasLogicalWidth / 2;
+            const centerY = canvasLogicalHeight * 0.72;  // 縁側の位置に調整
+            const { baseColor, accentColor, earInnerColor, expression, level } = appearance;
             
-            // サイズ設定
-            const headSize = 50 + evolutionStage * 5;
+            // サイズ設定（レベルに応じて少しずつ大きくなる）
+            const headSize = 50 + Math.min(level, 10) * 2;
             const bodyWidth = headSize * 0.9;
             const bodyHeight = headSize * 0.5;
             
@@ -730,48 +1091,18 @@
             
             if (isSleeping) {
                 // 昼寝ポーズ（丸くなって寝ている）
-                drawSleepingCat(0, 0, headSize, baseColor, accentColor, earInnerColor, evolutionStage, isBlinking, expression);
+                drawSleepingCat(0, 0, headSize, baseColor, accentColor, earInnerColor, level, isBlinking, expression);
             } else {
                 // 起きているポーズ
-                // 影を描画
-                ctx.beginPath();
-                ctx.ellipse(0, headSize * 0.8, bodyWidth * 1.2, 8, 0, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
-                ctx.fill();
-                
-                // しっぽを描画
-                drawTail(bodyWidth * 0.8, headSize * 0.3, baseColor, tailWag);
-                
-                // 体を描画
-                drawBody(0, headSize * 0.3, bodyWidth, bodyHeight, baseColor, accentColor);
-                
-                // 後ろ足を描画
-                drawLegs(0, headSize * 0.3 + bodyHeight * 0.5, bodyWidth * 0.8, baseColor);
-                
-                // 頭を描画
-                drawHead(0, -headSize * 0.4, headSize, baseColor, accentColor, earInnerColor, evolutionStage);
-                
-                // 顔のパーツを描画
-                const faceY = -headSize * 0.4;
-                drawCatEyes(0, faceY, headSize, expression, isBlinking, actionTimer);
-                drawCatNose(0, faceY + headSize * 0.2, headSize);
-                drawCatMouth(0, faceY + headSize * 0.35, headSize, expression, actionTimer);
-                drawWhiskers(0, faceY + headSize * 0.25, headSize);
-                drawCheeks(0, faceY + headSize * 0.15, headSize, expression);
-                
-                // 進化段階3では王冠とキラキラ
-                if (evolutionStage >= 3) {
-                    drawCrown(0, faceY - headSize * 0.85);
-                    drawSparkles(headSize);
-                }
+                drawAwakeCat(0, 0, headSize, baseColor, accentColor, earInnerColor, level, expression, isBlinking, actionTimer, tailWag);
             }
             
             ctx.restore();
         }
 
         // 昼寝している猫を描画
-        function drawSleepingCat(x, y, headSize, baseColor, accentColor, earInnerColor, evolutionStage, isBlinking, expression) {
-            const sleepBreath = Math.sin(Date.now() / 800) * 2;  // 寝息で体が動く
+        function drawSleepingCat(x, y, headSize, baseColor, accentColor, earInnerColor, level, isBlinking, expression) {
+            const sleepBreath = Math.sin(Date.now() / 600) * 6;  // 寝息で体が大きく動く
             
             // 影
             ctx.beginPath();
@@ -789,19 +1120,37 @@
             ctx.fillStyle = bodyGradient;
             ctx.fill();
             
-            // しっぽ（体に巻き付いている）
+            // しっぽ（均一な太さで体に巻き付いている・短め）
+            const tailWave = Math.sin(Date.now() / 1000) * 0.08;
+            ctx.save();
+            ctx.translate(x + headSize * 0.9, y + headSize * 0.2);
+            ctx.rotate(tailWave);
             ctx.beginPath();
-            ctx.moveTo(x + headSize * 1.1, y + headSize * 0.2);
-            ctx.quadraticCurveTo(x + headSize * 1.5, y + headSize * 0.5, x + headSize * 1.3, y + headSize * 0.8);
-            ctx.quadraticCurveTo(x + headSize * 0.8, y + headSize * 1, x + headSize * 0.3, y + headSize * 0.7);
-            ctx.quadraticCurveTo(x + headSize * 0.6, y + headSize * 0.85, x + headSize * 1.0, y + headSize * 0.65);
-            ctx.quadraticCurveTo(x + headSize * 1.3, y + headSize * 0.4, x + headSize * 1.1, y + headSize * 0.2);
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(headSize * 0.35, headSize * 0.2, headSize * 0.4, headSize * 0.45);
+            ctx.quadraticCurveTo(headSize * 0.35, headSize * 0.65, headSize * 0.1, headSize * 0.7);
+            ctx.strokeStyle = baseColor;
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            ctx.restore();
+            
+            // 前足（顔の下で重ねている）
+            // 奥の前足
+            ctx.beginPath();
+            ctx.ellipse(x - headSize * 0.35, y + headSize * 0.4, headSize * 0.2, headSize * 0.12, -0.2, 0, Math.PI * 2);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            
+            // 手前の前足
+            ctx.beginPath();
+            ctx.ellipse(x - headSize * 0.55, y + headSize * 0.35, headSize * 0.22, headSize * 0.14, -0.3, 0, Math.PI * 2);
             ctx.fillStyle = baseColor;
             ctx.fill();
             
-            // 前足（顔の下に）
+            // 肉球
             ctx.beginPath();
-            ctx.ellipse(x - headSize * 0.45, y + headSize * 0.35, headSize * 0.25, headSize * 0.15, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(x - headSize * 0.6, y + headSize * 0.45, headSize * 0.1, headSize * 0.06, 0, 0, Math.PI * 2);
             ctx.fillStyle = lightenColor(baseColor, 25);
             ctx.fill();
             
@@ -824,8 +1173,8 @@
             ctx.fillStyle = headGradient;
             ctx.fill();
             
-            // 額の模様（進化段階2以上）
-            if (evolutionStage >= 2) {
+            // Lv.3以上: 額の模様
+            if (level >= 3) {
                 ctx.beginPath();
                 ctx.moveTo(0, -headSize * 0.55);
                 ctx.lineTo(-headSize * 0.12, -headSize * 0.3);
@@ -854,13 +1203,24 @@
             ctx.arc(eyeSpacing, eyeY, headSize * 0.12, 0.15 * Math.PI, 0.85 * Math.PI);
             ctx.stroke();
             
-            // 鼻
+            // マズル（ふっくらした口元）
+            ctx.beginPath();
+            ctx.ellipse(-headSize * 0.1, headSize * 0.28, headSize * 0.15, headSize * 0.1, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 30);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.ellipse(headSize * 0.1, headSize * 0.28, headSize * 0.15, headSize * 0.1, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 30);
+            ctx.fill();
+            
+            // 鼻（オレンジ）
             ctx.beginPath();
             ctx.moveTo(0, headSize * 0.15);
             ctx.lineTo(-headSize * 0.06, headSize * 0.22);
             ctx.lineTo(headSize * 0.06, headSize * 0.22);
             ctx.closePath();
-            ctx.fillStyle = '#ffb6c1';
+            ctx.fillStyle = '#FFB61D';
             ctx.fill();
             
             // 口（寝ている時の穏やかな口）
@@ -876,16 +1236,16 @@
             ctx.stroke();
             
             // ひげ
-            ctx.strokeStyle = '#555';
+            ctx.strokeStyle = '#aaa';
             ctx.lineWidth = 1;
             for (let i = 0; i < 3; i++) {
                 ctx.beginPath();
-                ctx.moveTo(-headSize * 0.25, headSize * 0.2 + (i - 1) * 6);
-                ctx.lineTo(-headSize * 0.65, headSize * 0.18 + (i - 1) * 8);
+                ctx.moveTo(-headSize * 0.55, headSize * 0.2 + (i - 1) * 6);
+                ctx.lineTo(-headSize * 1.0, headSize * 0.18 + (i - 1) * 8);
                 ctx.stroke();
                 ctx.beginPath();
-                ctx.moveTo(headSize * 0.25, headSize * 0.2 + (i - 1) * 6);
-                ctx.lineTo(headSize * 0.65, headSize * 0.18 + (i - 1) * 8);
+                ctx.moveTo(headSize * 0.55, headSize * 0.2 + (i - 1) * 6);
+                ctx.lineTo(headSize * 1.0, headSize * 0.18 + (i - 1) * 8);
                 ctx.stroke();
             }
             
@@ -898,38 +1258,152 @@
             ctx.ellipse(headSize * 0.45, headSize * 0.1, headSize * 0.12, headSize * 0.08, 0, 0, Math.PI * 2);
             ctx.fill();
             
+            // Lv.6以上: 首輪（寝ている時も見える部分）
+            if (level >= 6) {
+                ctx.beginPath();
+                ctx.arc(0, headSize * 0.55, headSize * 0.4, 0.2 * Math.PI, 0.8 * Math.PI);
+                ctx.strokeStyle = level >= 8 ? '#ffd700' : '#ff6b6b';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+                
+                // 鈴
+                ctx.beginPath();
+                ctx.arc(0, headSize * 0.7, headSize * 0.08, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffd700';
+                ctx.fill();
+                ctx.strokeStyle = '#daa520';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+            
             ctx.restore();
             
-            // 寝息の「zzz」
-            const zzzAlpha = (Math.sin(Date.now() / 600) + 1) / 2;
+            // 寝息の「zzz」（大きめでアニメーション）
+            const zzzTime = Date.now() / 800;
+            const zzzFloat = Math.sin(zzzTime) * 5;  // 上下に浮遊
             ctx.save();
-            ctx.globalAlpha = zzzAlpha * 0.7;
-            ctx.font = 'bold 16px sans-serif';
-            ctx.fillStyle = '#6b7280';
-            ctx.fillText('z', x - headSize * 1.1, y - headSize * 0.6);
-            ctx.font = 'bold 20px sans-serif';
-            ctx.fillText('z', x - headSize * 1.3, y - headSize * 0.85);
+            
+            // 小さいz
+            ctx.globalAlpha = (Math.sin(zzzTime) + 1) / 2 * 0.8;
+            ctx.font = 'bold 18px sans-serif';
+            ctx.fillStyle = '#7a8a9a';
+            ctx.fillText('z', x - headSize * 1.0, y - headSize * 0.5 + zzzFloat);
+            
+            // 中くらいのz
+            ctx.globalAlpha = (Math.sin(zzzTime + 0.5) + 1) / 2 * 0.85;
             ctx.font = 'bold 24px sans-serif';
-            ctx.fillText('Z', x - headSize * 1.5, y - headSize * 1.15);
+            ctx.fillText('z', x - headSize * 1.25, y - headSize * 0.85 + zzzFloat * 0.8);
+            
+            // 大きいZ
+            ctx.globalAlpha = (Math.sin(zzzTime + 1) + 1) / 2 * 0.9;
+            ctx.font = 'bold 32px sans-serif';
+            ctx.fillText('Z', x - headSize * 1.55, y - headSize * 1.25 + zzzFloat * 0.6);
+            
             ctx.restore();
             
-            // 進化段階3では寝ていてもキラキラ
-            if (evolutionStage >= 3) {
+            // Lv.5以上: キラキラ（寝ていても少し光る）
+            if (level >= 5) {
                 ctx.save();
                 ctx.translate(x - headSize * 0.5, y - headSize * 0.2);
-                drawSparkles(headSize * 0.8);
+                ctx.globalAlpha = 0.3 + (level - 5) * 0.1; // レベルが上がると輝きが増す
+                drawSparkles(headSize * 0.5 + (level - 5) * 0.1 * headSize);
                 ctx.restore();
+            }
+            
+            // Lv.9以上: オーラ（寝ていても淡く）
+            if (level >= 9) {
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                const auraGradient = ctx.createRadialGradient(x, y, headSize * 0.3, x, y, headSize * 2);
+                auraGradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+                auraGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                ctx.fillStyle = auraGradient;
+                ctx.beginPath();
+                ctx.ellipse(x, y, headSize * 2, headSize * 1.5, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        // 起きている猫を描画
+        function drawAwakeCat(x, y, headSize, baseColor, accentColor, earInnerColor, level, expression, isBlinking, actionTimer, tailWag) {
+            const bodyWidth = headSize * 0.7;
+            const bodyHeight = headSize * 0.6;
+            
+            // 影を描画
+            ctx.beginPath();
+            ctx.ellipse(x, y + headSize * 0.8, bodyWidth * 1.2, 8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fill();
+            
+            // しっぽを描画
+            drawTail(x + bodyWidth * 0.8, y + headSize * 0.3, baseColor, tailWag);
+            
+            // 体を描画
+            drawBody(x, y + headSize * 0.3, bodyWidth, bodyHeight, baseColor, accentColor);
+            
+            // 後ろ足を描画
+            drawLegs(x, y + headSize * 0.3 + bodyHeight * 0.5, bodyWidth * 0.8, baseColor);
+            
+            // 前足を描画
+            drawFrontLegs(x, y + headSize * 0.55, baseColor);
+            
+            // 頭を描画
+            drawHead(x, y - headSize * 0.4, headSize, baseColor, accentColor, earInnerColor, level);
+            
+            // 顔のパーツを描画
+            const faceY = y - headSize * 0.4;
+            drawCatEyes(x, faceY, headSize, expression, isBlinking, actionTimer);
+            drawCatNose(x, faceY + headSize * 0.2, headSize);
+            drawCatMouth(x, faceY + headSize * 0.35, headSize, expression, actionTimer);
+            drawWhiskers(x, faceY + headSize * 0.25, headSize);
+            drawCheeks(x, faceY + headSize * 0.15, headSize, expression, level);
+            
+            // レベルに応じた装飾
+            // Lv.5以上: キラキラ
+            if (level >= 5) {
+                ctx.save();
+                ctx.globalAlpha = 0.5 + (level - 5) * 0.1;
+                drawSparkles(headSize * 0.6 + (level - 5) * 0.1 * headSize);
+                ctx.restore();
+            }
+            
+            // Lv.6以上: 首輪
+            if (level >= 6) {
+                drawCollar(x, y + headSize * 0.15, headSize, level);
+            }
+            
+            // Lv.9以上: オーラ
+            if (level >= 9) {
+                ctx.save();
+                ctx.globalAlpha = 0.2 + (level - 9) * 0.05;
+                const auraGradient = ctx.createRadialGradient(x, y, headSize * 0.3, x, y, headSize * 2.5);
+                auraGradient.addColorStop(0, 'rgba(255, 215, 0, 0.4)');
+                auraGradient.addColorStop(0.5, 'rgba(255, 200, 100, 0.2)');
+                auraGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                ctx.fillStyle = auraGradient;
+                ctx.beginPath();
+                ctx.ellipse(x, y, headSize * 2.5, headSize * 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            // Lv.10以上: 王冠
+            if (level >= 10) {
+                drawCrown(x, faceY - headSize * 0.85);
             }
         }
 
         // 猫の頭を描画
-        function drawHead(x, y, size, baseColor, accentColor, earInnerColor, stage) {
+        function drawHead(x, y, size, baseColor, accentColor, earInnerColor, level) {
             ctx.save();
             ctx.translate(x, y);
             
             // 耳を描画（頭の後ろに）- 大きめの猫耳
-            drawCatEar(-size * 0.7, -size * 0.55, -0.25, size * 0.75, baseColor, earInnerColor);
-            drawCatEar(size * 0.7, -size * 0.55, 0.25, size * 0.75, baseColor, earInnerColor);
+            // Lv.4以上: 耳が少し大きくふわふわに
+            const earScale = level >= 4 ? 1.1 : 1.0;
+            drawCatEar(-size * 0.7, -size * 0.55, -0.25, size * 0.75 * earScale, baseColor, earInnerColor);
+            drawCatEar(size * 0.7, -size * 0.55, 0.25, size * 0.75 * earScale, baseColor, earInnerColor);
             
             // 頭（少し縦長の楕円）
             ctx.beginPath();
@@ -942,8 +1416,8 @@
             ctx.fillStyle = headGradient;
             ctx.fill();
             
-            // 額の模様（進化段階2以上）
-            if (stage >= 2) {
+            // Lv.3以上: 額の模様
+            if (level >= 3) {
                 ctx.beginPath();
                 ctx.moveTo(0, -size * 0.6);
                 ctx.lineTo(-size * 0.15, -size * 0.3);
@@ -953,6 +1427,50 @@
                 ctx.fillStyle = accentColor;
                 ctx.fill();
             }
+            
+            // Lv.7以上: 毛並みの光沢
+            if (level >= 7) {
+                ctx.beginPath();
+                ctx.ellipse(-size * 0.3, -size * 0.2, size * 0.25, size * 0.15, -0.3, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fill();
+            }
+            
+            ctx.restore();
+        }
+        
+        // 首輪を描画
+        function drawCollar(x, y, headSize, level) {
+            ctx.save();
+            
+            // 首輪の色（レベルで変化）
+            let collarColor = '#ff6b6b'; // Lv.6-7: 赤いリボン
+            if (level >= 8) collarColor = '#ffd700'; // Lv.8以上: 金色
+            
+            // 首輪
+            ctx.beginPath();
+            ctx.ellipse(x, y, headSize * 0.35, headSize * 0.12, 0, 0, Math.PI * 2);
+            ctx.strokeStyle = collarColor;
+            ctx.lineWidth = 5;
+            ctx.stroke();
+            
+            // 鈴
+            const bellY = y + headSize * 0.15;
+            ctx.beginPath();
+            ctx.arc(x, bellY, headSize * 0.1, 0, Math.PI * 2);
+            ctx.fillStyle = '#ffd700';
+            ctx.fill();
+            ctx.strokeStyle = '#daa520';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            
+            // 鈴の模様
+            ctx.beginPath();
+            ctx.moveTo(x - headSize * 0.05, bellY);
+            ctx.lineTo(x + headSize * 0.05, bellY);
+            ctx.strokeStyle = '#daa520';
+            ctx.lineWidth = 1;
+            ctx.stroke();
             
             ctx.restore();
         }
@@ -1064,7 +1582,7 @@
             ctx.restore();
         }
 
-        // しっぽを描画
+        // しっぽを描画（均一な太さ）
         function drawTail(x, y, baseColor, wagAngle) {
             ctx.save();
             ctx.translate(x, y);
@@ -1072,14 +1590,41 @@
             
             ctx.beginPath();
             ctx.moveTo(0, 0);
-            ctx.quadraticCurveTo(40, -20, 50, -50);
-            ctx.quadraticCurveTo(55, -70, 45, -80);
-            ctx.quadraticCurveTo(35, -75, 35, -55);
-            ctx.quadraticCurveTo(30, -25, 0, 0);
+            ctx.quadraticCurveTo(22, -12, 28, -30);
+            ctx.quadraticCurveTo(30, -45, 22, -55);
+            ctx.strokeStyle = baseColor;
+            ctx.lineWidth = 14;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        // 前足を描画
+        function drawFrontLegs(x, y, baseColor) {
+            // 左前足
+            ctx.beginPath();
+            ctx.ellipse(x - 18, y, 10, 16, -0.15, 0, Math.PI * 2);
             ctx.fillStyle = baseColor;
             ctx.fill();
             
-            ctx.restore();
+            // 右前足
+            ctx.beginPath();
+            ctx.ellipse(x + 18, y, 10, 16, 0.15, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            
+            // 肉球（左）
+            ctx.beginPath();
+            ctx.ellipse(x - 18, y + 12, 7, 5, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 20);
+            ctx.fill();
+            
+            // 肉球（右）
+            ctx.beginPath();
+            ctx.ellipse(x + 18, y + 12, 7, 5, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 20);
+            ctx.fill();
         }
 
         // 猫の目を描画
@@ -1112,9 +1657,18 @@
                 drawClosedEye(-eyeSpacing, eyeY, headSize * 0.12);
                 drawClosedEye(eyeSpacing, eyeY, headSize * 0.12);
             } else if (expression === 'sad') {
-                // 悲しい：潤んだ目
+                // 悲しい：潤んだ目（涙目）
                 drawSadEye(-eyeSpacing, eyeY, headSize * 0.14);
                 drawSadEye(eyeSpacing, eyeY, headSize * 0.14);
+                // 涙
+                ctx.fillStyle = 'rgba(100, 180, 255, 0.6)';
+                ctx.beginPath();
+                ctx.ellipse(-eyeSpacing + headSize * 0.08, eyeY + headSize * 0.2, 3, 5, 0, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (expression === 'hungry') {
+                // お腹が空いた：うるうるした期待の目
+                drawHungryEye(-eyeSpacing, eyeY, headSize * 0.15);
+                drawHungryEye(eyeSpacing, eyeY, headSize * 0.15);
             } else if (expression === 'tired') {
                 // 疲れ：半目
                 drawTiredEye(-eyeSpacing, eyeY, headSize * 0.13);
@@ -1165,19 +1719,16 @@
             ctx.stroke();
         }
 
-        // 細めた目
+        // 細めた目（糸目・幸せそうな閉じ目）
         function drawSquintEye(x, y, size, squint) {
-            const openness = 0.3 + squint * 0.4;
-            ctx.beginPath();
-            ctx.ellipse(x, y, size, size * openness, 0, 0, Math.PI * 2);
-            ctx.fillStyle = '#333';
-            ctx.fill();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
             
-            // 小さなハイライト
+            // 糸目（上向きの弧・にっこり・大きめ）
             ctx.beginPath();
-            ctx.arc(x - size * 0.3, y - size * 0.1, size * 0.15, 0, Math.PI * 2);
-            ctx.fillStyle = '#fff';
-            ctx.fill();
+            ctx.arc(x, y, size * 1.2, 1.15 * Math.PI, 1.85 * Math.PI);
+            ctx.stroke();
         }
 
         // とろーんとした目
@@ -1259,6 +1810,38 @@
             ctx.stroke();
         }
 
+        // お腹が空いた目（うるうる期待）
+        function drawHungryEye(x, y, size) {
+            // 大きな期待の目
+            ctx.beginPath();
+            ctx.ellipse(x, y, size * 1.1, size * 1.3, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            
+            // 瞳（大きめ、上目遣い）
+            ctx.beginPath();
+            ctx.ellipse(x, y + size * 0.1, size * 0.5, size * 1.0, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#2d5a27';
+            ctx.fill();
+            
+            // 瞳孔
+            ctx.beginPath();
+            ctx.ellipse(x, y + size * 0.1, size * 0.2, size * 0.8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#111';
+            ctx.fill();
+            
+            // キラキラハイライト（期待感）
+            ctx.beginPath();
+            ctx.arc(x - size * 0.25, y - size * 0.2, size * 0.3, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(x + size * 0.15, y + size * 0.3, size * 0.15, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fill();
+        }
+
         // 疲れた目
         function drawTiredEye(x, y, size) {
             // 半目
@@ -1280,14 +1863,28 @@
             ctx.fill();
         }
 
-        // 猫の鼻
+        // 猫の鼻とマズル
         function drawCatNose(x, y, headSize) {
+            // マズル（ふっくらした口元）
+            // 左側のマズル
+            ctx.beginPath();
+            ctx.ellipse(x - headSize * 0.12, y + headSize * 0.18, headSize * 0.18, headSize * 0.12, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor('#f5f5f5', 10);
+            ctx.fill();
+            
+            // 右側のマズル
+            ctx.beginPath();
+            ctx.ellipse(x + headSize * 0.12, y + headSize * 0.18, headSize * 0.18, headSize * 0.12, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor('#f5f5f5', 10);
+            ctx.fill();
+            
+            // 鼻（オレンジ）
             ctx.beginPath();
             ctx.moveTo(x, y);
             ctx.lineTo(x - headSize * 0.08, y + headSize * 0.1);
             ctx.lineTo(x + headSize * 0.08, y + headSize * 0.1);
             ctx.closePath();
-            ctx.fillStyle = '#ffb6c1';
+            ctx.fillStyle = '#FFB61D';
             ctx.fill();
         }
 
@@ -1330,6 +1927,13 @@
                 ctx.moveTo(x - headSize * 0.1, y);
                 ctx.quadraticCurveTo(x, y + headSize * 0.08, x + headSize * 0.1, y);
                 ctx.stroke();
+            } else if (expression === 'hungry') {
+                // お腹が空いた（小さく口を開けて期待）
+                ctx.beginPath();
+                ctx.ellipse(x, y + headSize * 0.02, headSize * 0.06, headSize * 0.08, 0, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff6b6b';
+                ctx.fill();
+                ctx.stroke();
             } else {
                 // 通常の猫口（ω型）
                 ctx.beginPath();
@@ -1353,8 +1957,8 @@
             for (let i = 0; i < 3; i++) {
                 const angle = -0.2 + i * 0.15;
                 ctx.beginPath();
-                ctx.moveTo(x - headSize * 0.3, y + (i - 1) * 8);
-                ctx.lineTo(x - headSize * 0.8, y + (i - 1) * 12 + Math.sin(angle) * 5);
+                ctx.moveTo(x - headSize * 0.6, y + (i - 1) * 8);
+                ctx.lineTo(x - headSize * 1.1, y + (i - 1) * 12 + Math.sin(angle) * 5);
                 ctx.stroke();
             }
             
@@ -1362,24 +1966,32 @@
             for (let i = 0; i < 3; i++) {
                 const angle = 0.2 - i * 0.15;
                 ctx.beginPath();
-                ctx.moveTo(x + headSize * 0.3, y + (i - 1) * 8);
-                ctx.lineTo(x + headSize * 0.8, y + (i - 1) * 12 + Math.sin(angle) * 5);
+                ctx.moveTo(x + headSize * 0.6, y + (i - 1) * 8);
+                ctx.lineTo(x + headSize * 1.1, y + (i - 1) * 12 + Math.sin(angle) * 5);
                 ctx.stroke();
             }
         }
 
         // 頬
-        function drawCheeks(x, y, headSize, expression) {
+        function drawCheeks(x, y, headSize, expression, level) {
             // なでられ中や幸せな時は頬を赤くする
-            const blushIntensity = (expression === 'petted' || expression === 'happy' || expression === 'playing') ? 0.6 : 0.3;
+            let blushIntensity = (expression === 'petted' || expression === 'happy' || expression === 'playing') ? 0.6 : 0.3;
+            
+            // Lv.2以上: 頬のピンクが濃くなる
+            if (level >= 2) {
+                blushIntensity += Math.min((level - 1) * 0.03, 0.2);
+            }
+            
+            // Lv.2以上: 頬が少し大きくなる
+            const cheekSize = level >= 2 ? 1 + Math.min((level - 1) * 0.05, 0.3) : 1;
             
             ctx.beginPath();
-            ctx.ellipse(x - headSize * 0.55, y + headSize * 0.1, headSize * 0.15, headSize * 0.1, 0, 0, Math.PI * 2);
+            ctx.ellipse(x - headSize * 0.55, y + headSize * 0.1, headSize * 0.15 * cheekSize, headSize * 0.1 * cheekSize, 0, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(255, 150, 150, ${blushIntensity})`;
             ctx.fill();
             
             ctx.beginPath();
-            ctx.ellipse(x + headSize * 0.55, y + headSize * 0.1, headSize * 0.15, headSize * 0.1, 0, 0, Math.PI * 2);
+            ctx.ellipse(x + headSize * 0.55, y + headSize * 0.1, headSize * 0.15 * cheekSize, headSize * 0.1 * cheekSize, 0, 0, Math.PI * 2);
             ctx.fillStyle = `rgba(255, 150, 150, ${blushIntensity})`;
             ctx.fill();
         }
@@ -1547,7 +2159,12 @@
             
             gameState.hunger = Math.max(0, gameState.hunger - decreaseRate * deltaTime * 0.8);
             gameState.happy = Math.max(0, gameState.happy - decreaseRate * deltaTime * 0.6);
-            gameState.energy = Math.max(0, gameState.energy - decreaseRate * deltaTime * 0.4);
+            
+            // げんきはアクション中でない時に少しずつ回復
+            if (!gameState.actionAnimation) {
+                const recoveryRate = 0.3; // 1秒あたりの回復量
+                gameState.energy = Math.min(100, gameState.energy + recoveryRate * deltaTime);
+            }
         }
 
         // 経験値を追加してレベルアップを確認
@@ -1560,11 +2177,26 @@
                 gameState.level++;
                 gameState.expToNext = Math.floor(gameState.expToNext * 1.5);
                 
-                // レベルアップメッセージ
-                elements.petMessage.textContent = `🎉 レベルアップ！ Lv.${gameState.level} 🎉`;
+                // レベルごとの変化メッセージ
+                let evolutionMsg = '';
+                switch(gameState.level) {
+                    case 2: evolutionMsg = ' 頬がピンクに！'; break;
+                    case 3: evolutionMsg = ' 額に模様が！'; break;
+                    case 4: evolutionMsg = ' 耳がふわふわに！'; break;
+                    case 5: evolutionMsg = ' キラキラ輝き出した！'; break;
+                    case 6: evolutionMsg = ' 首輪をゲット！'; break;
+                    case 7: evolutionMsg = ' 毛並みがツヤツヤ！'; break;
+                    case 8: evolutionMsg = ' 金の首輪に！'; break;
+                    case 9: evolutionMsg = ' オーラが出てきた！'; break;
+                    case 10: evolutionMsg = ' 👑 王冠をゲット！'; break;
+                }
                 
-                // レベルアップ効果音
+                // レベルアップメッセージ
+                elements.petMessage.textContent = `🎉 Lv.${gameState.level}${evolutionMsg}`;
+                
+                // レベルアップ効果音 & 触覚フィードバック
                 playSfx('levelup');
+                hapticFeedback('success');
             }
         }
 
@@ -1834,28 +2466,91 @@
         // ============================================
         // イベントリスナーの設定
         // ============================================
+        // ============================================
+        // 触覚フィードバック（HIG準拠）
+        // ============================================
+        function hapticFeedback(type = 'light') {
+            // iOS/Androidの触覚フィードバック
+            if ('vibrate' in navigator) {
+                switch (type) {
+                    case 'light':
+                        navigator.vibrate(10);
+                        break;
+                    case 'medium':
+                        navigator.vibrate(20);
+                        break;
+                    case 'heavy':
+                        navigator.vibrate([30, 10, 30]);
+                        break;
+                    case 'success':
+                        navigator.vibrate([10, 50, 20]);
+                        break;
+                }
+            }
+        }
+
+        // ボタンイベント（触覚フィードバック付き）
         document.getElementById('btnFeed').addEventListener('click', () => {
+            hapticFeedback('light');
             feed();
             playSfx('eat');
         });
         document.getElementById('btnPet').addEventListener('click', () => {
+            hapticFeedback('light');
             pet();
             playSfx('pet');
         });
         document.getElementById('btnPlay').addEventListener('click', () => {
+            hapticFeedback('medium');
             if (gameState.energy >= 10) {
                 playSfx('play');
             }
             play();
         });
-        document.getElementById('soundBtn').addEventListener('click', toggleBgm);
+        document.getElementById('soundBtn').addEventListener('click', () => {
+            hapticFeedback('light');
+            toggleBgm();
+        });
+
+        // ============================================
+        // ============================================
+        // 日付・時間表示
+        // ============================================
+        const dateText = document.getElementById('dateText');
+        const timeText = document.getElementById('timeText');
+        
+        function updateDateTime() {
+            const now = new Date();
+            
+            // 日付（曜日付き）
+            const days = ['日', '月', '火', '水', '木', '金', '土'];
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const day = days[now.getDay()];
+            dateText.textContent = `${month}/${date}（${day}）`;
+            
+            // 時間
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            timeText.textContent = `${hours}:${minutes}`;
+        }
+        
+        // 初回実行 & 毎分更新
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
 
         // ============================================
         // ゲーム開始
         // ============================================
+        
+        // 初期化処理
+        resizeCanvas();
+        initSnow();
+        
         requestAnimationFrame(gameLoop);
         
         console.log('🐱 猫暮らしが起動しました！');
+        console.log('📱 モバイル対応しています！');
         console.log('🎵 BGMボタンを押すと音楽が流れます！');
     </script>
 </body>
