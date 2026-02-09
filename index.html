@@ -1173,6 +1173,9 @@
             ctx.translate(x - headSize * 0.5, y - headSize * 0.2 + sleepBreath * 0.5);
             ctx.rotate(-0.15);  // 少し傾ける
             
+            // Lv.4以上: たてがみ
+            drawMane(0, 0, headSize * 0.9, baseColor, level);
+            
             // 耳
             drawCatEar(-headSize * 0.55, -headSize * 0.5, -0.35, headSize * 0.65, baseColor, earInnerColor);
             drawCatEar(headSize * 0.5, -headSize * 0.55, 0.2, headSize * 0.65, baseColor, earInnerColor);
@@ -1413,6 +1416,9 @@
             ctx.save();
             ctx.translate(x, y);
             
+            // Lv.4以上: たてがみを描画（頭の後ろに）
+            drawMane(0, 0, size, baseColor, level);
+            
             // 耳を描画（頭の後ろに）- 大きめの猫耳
             // Lv.4以上: 耳が少し大きくふわふわに
             const earScale = level >= 4 ? 1.1 : 1.0;
@@ -1485,6 +1491,49 @@
             ctx.strokeStyle = '#daa520';
             ctx.lineWidth = 1;
             ctx.stroke();
+            
+            ctx.restore();
+        }
+
+        // たてがみを描画（Lv.4以上）
+        function drawMane(x, y, headSize, baseColor, level) {
+            if (level < 4) return;
+            
+            // レベルに応じてたてがみの長さが増える
+            const maneLength = (level - 3) * 8;  // Lv4=8, Lv5=16, Lv6=24...
+            const maneCount = 8 + (level - 4) * 2;  // 房の数も増える
+            
+            ctx.save();
+            
+            // たてがみの色（少し濃いめ）
+            const maneColor = darkenColor(baseColor, 10);
+            
+            // 頭の周りにたてがみを描画
+            for (let i = 0; i < maneCount; i++) {
+                const angle = (Math.PI * 0.3) + (Math.PI * 1.4 / maneCount) * i;  // 上部から両サイドにかけて
+                const startX = x + Math.cos(angle) * headSize * 0.9;
+                const startY = y + Math.sin(angle) * headSize * 0.85;
+                
+                // 各房のゆらぎ
+                const wave = Math.sin(Date.now() / 800 + i) * 3;
+                const length = maneLength + Math.sin(i * 0.7) * 5;
+                
+                // たてがみの房を描画
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                
+                const endX = startX + Math.cos(angle + 0.2) * length + wave;
+                const endY = startY + Math.sin(angle + 0.3) * length * 1.2;
+                const ctrlX = startX + Math.cos(angle) * length * 0.6 + wave * 0.5;
+                const ctrlY = startY + Math.sin(angle) * length * 0.8;
+                
+                ctx.quadraticCurveTo(ctrlX, ctrlY, endX, endY);
+                
+                ctx.strokeStyle = maneColor;
+                ctx.lineWidth = 4 + (level - 4) * 0.5;  // レベルで太さも増える
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            }
             
             ctx.restore();
         }
