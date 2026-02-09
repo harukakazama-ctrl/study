@@ -2210,7 +2210,7 @@
             gameState.hunger = Math.min(100, gameState.hunger + 25);
             gameState.actionAnimation = 'eat';
             gameState.actionTimer = 0;
-            addExp(10);
+            addExp(20);
             
             setTimeout(() => {
                 gameState.actionAnimation = null;
@@ -2224,7 +2224,7 @@
             gameState.happy = Math.min(100, gameState.happy + 20);
             gameState.actionAnimation = 'pet';
             gameState.actionTimer = 0;
-            addExp(8);
+            addExp(16);
             
             setTimeout(() => {
                 gameState.actionAnimation = null;
@@ -2241,7 +2241,7 @@
                 gameState.happy = Math.min(100, gameState.happy + 30);
                 gameState.actionAnimation = 'play';
                 gameState.actionTimer = 0;
-                addExp(15);
+                addExp(30);
                 
                 setTimeout(() => {
                     gameState.actionAnimation = null;
