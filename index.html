@@ -706,7 +706,12 @@
             blinkTimer: 0,       // まばたきタイマー
             isBlinking: false,   // まばたき中か
             actionAnimation: null, // アクションアニメーション
-            actionTimer: 0       // アクションタイマー
+            actionTimer: 0,      // アクションタイマー
+            
+            // 寝る/歩く切り替え
+            petState: 'sleeping',  // 'sleeping' または 'walking'
+            stateTimer: 0,         // 状態タイマー
+            walkCycle: 0           // 歩行アニメーション用
         };
 
         // ============================================
@@ -1080,8 +1085,9 @@
             const bodyWidth = headSize * 0.9;
             const bodyHeight = headSize * 0.5;
             
-            // 昼寝中かどうか（アクションがない時は寝ている）
-            const isSleeping = !actionAnimation;
+            // アクション中は起きている、それ以外は寝る/歩くを交互に
+            const isSleeping = !actionAnimation && gameState.petState === 'sleeping';
+            const isWalking = !actionAnimation && gameState.petState === 'walking';
             
             // アクションアニメーションのオフセット
             let actionOffsetX = 0;
@@ -1106,8 +1112,11 @@
             if (isSleeping) {
                 // 昼寝ポーズ（丸くなって寝ている）
                 drawSleepingCat(0, 0, headSize, baseColor, accentColor, earInnerColor, level, isBlinking, expression);
+            } else if (isWalking) {
+                // 二足歩行ポーズ
+                drawWalkingCat(0, 0, headSize, baseColor, accentColor, earInnerColor, level, isBlinking, gameState.walkCycle);
             } else {
-                // 起きているポーズ
+                // 起きているポーズ（アクション中）
                 drawAwakeCat(0, 0, headSize, baseColor, accentColor, earInnerColor, level, expression, isBlinking, actionTimer, tailWag);
             }
             
@@ -1342,6 +1351,247 @@
             }
         }
         
+        // 二足歩行の猫を描画
+        function drawWalkingCat(x, y, headSize, baseColor, accentColor, earInnerColor, level, isBlinking, walkCycle) {
+            const bodyHeight = headSize * 1.2;
+            const bodyWidth = headSize * 0.6;
+            
+            // 歩行アニメーション
+            const walkBob = Math.sin(walkCycle * 0.15) * 5;  // 上下の揺れ
+            const armSwing = Math.sin(walkCycle * 0.15) * 0.3;  // 腕の振り
+            const legSwing = Math.sin(walkCycle * 0.15) * 0.4;  // 足の振り
+            
+            // 影を描画
+            ctx.beginPath();
+            ctx.ellipse(x, y + headSize * 1.5, bodyWidth * 0.8, 8, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fill();
+            
+            // しっぽ（後ろで揺れる）
+            ctx.save();
+            ctx.translate(x, y + headSize * 0.7);
+            ctx.rotate(Math.sin(walkCycle * 0.1) * 0.2);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.quadraticCurveTo(headSize * 0.5, headSize * 0.3, headSize * 0.3, headSize * 0.7);
+            ctx.strokeStyle = baseColor;
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            ctx.restore();
+            
+            // 後ろ足（右）
+            ctx.save();
+            ctx.translate(x + bodyWidth * 0.2, y + headSize * 0.9);
+            ctx.rotate(legSwing);
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.35, headSize * 0.15, headSize * 0.35, 0, 0, Math.PI * 2);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            // 足先
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.7, headSize * 0.12, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            ctx.restore();
+            
+            // 後ろ足（左）
+            ctx.save();
+            ctx.translate(x - bodyWidth * 0.2, y + headSize * 0.9);
+            ctx.rotate(-legSwing);
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.35, headSize * 0.15, headSize * 0.35, 0, 0, Math.PI * 2);
+            ctx.fillStyle = accentColor;
+            ctx.fill();
+            // 足先
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.7, headSize * 0.12, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            ctx.restore();
+            
+            // 体（縦長の楕円）
+            ctx.beginPath();
+            ctx.ellipse(x, y + headSize * 0.3 + walkBob, bodyWidth, bodyHeight * 0.6, 0, 0, Math.PI * 2);
+            const bodyGradient = ctx.createRadialGradient(x - bodyWidth * 0.3, y, 0, x, y + headSize * 0.3, bodyHeight);
+            bodyGradient.addColorStop(0, lightenColor(baseColor, 15));
+            bodyGradient.addColorStop(0.7, baseColor);
+            bodyGradient.addColorStop(1, accentColor);
+            ctx.fillStyle = bodyGradient;
+            ctx.fill();
+            
+            // おなか（白っぽい部分）
+            ctx.beginPath();
+            ctx.ellipse(x, y + headSize * 0.45 + walkBob, bodyWidth * 0.5, bodyHeight * 0.4, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 25);
+            ctx.fill();
+            
+            // 腕（右）
+            ctx.save();
+            ctx.translate(x + bodyWidth * 0.6, y - headSize * 0.1 + walkBob);
+            ctx.rotate(-armSwing);
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.25, headSize * 0.1, headSize * 0.25, 0.2, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            // 手
+            ctx.beginPath();
+            ctx.ellipse(headSize * 0.05, headSize * 0.5, headSize * 0.1, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            ctx.restore();
+            
+            // 腕（左）
+            ctx.save();
+            ctx.translate(x - bodyWidth * 0.6, y - headSize * 0.1 + walkBob);
+            ctx.rotate(armSwing);
+            ctx.beginPath();
+            ctx.ellipse(0, headSize * 0.25, headSize * 0.1, headSize * 0.25, -0.2, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            // 手
+            ctx.beginPath();
+            ctx.ellipse(-headSize * 0.05, headSize * 0.5, headSize * 0.1, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fillStyle = baseColor;
+            ctx.fill();
+            ctx.restore();
+            
+            // 頭（体の上）
+            ctx.save();
+            ctx.translate(x, y - headSize * 0.6 + walkBob);
+            
+            // たてがみ（Lv.4以上）
+            drawMane(0, 0, headSize * 0.85, baseColor, level);
+            
+            // 耳
+            const earScale = level >= 4 ? 1.1 : 1.0;
+            drawCatEar(-headSize * 0.55, -headSize * 0.45, -0.25, headSize * 0.6 * earScale, baseColor, earInnerColor);
+            drawCatEar(headSize * 0.55, -headSize * 0.45, 0.25, headSize * 0.6 * earScale, baseColor, earInnerColor);
+            
+            // 頭
+            ctx.beginPath();
+            ctx.ellipse(0, 0, headSize * 0.8, headSize * 0.75, 0, 0, Math.PI * 2);
+            const headGradient = ctx.createRadialGradient(-headSize * 0.2, -headSize * 0.2, 0, 0, 0, headSize * 0.8);
+            headGradient.addColorStop(0, lightenColor(baseColor, 20));
+            headGradient.addColorStop(0.7, baseColor);
+            headGradient.addColorStop(1, accentColor);
+            ctx.fillStyle = headGradient;
+            ctx.fill();
+            
+            // Lv.3以上: 額の模様
+            if (level >= 3) {
+                ctx.beginPath();
+                ctx.moveTo(0, -headSize * 0.5);
+                ctx.lineTo(-headSize * 0.12, -headSize * 0.25);
+                ctx.lineTo(0, -headSize * 0.32);
+                ctx.lineTo(headSize * 0.12, -headSize * 0.25);
+                ctx.closePath();
+                ctx.fillStyle = accentColor;
+                ctx.fill();
+            }
+            
+            // 目
+            const eyeSpacing = headSize * 0.3;
+            const eyeY = -headSize * 0.05;
+            
+            if (isBlinking) {
+                drawClosedEye(-eyeSpacing, eyeY, headSize * 0.1);
+                drawClosedEye(eyeSpacing, eyeY, headSize * 0.1);
+            } else {
+                // キラキラした目
+                drawNormalEye(-eyeSpacing, eyeY, headSize * 0.13);
+                drawNormalEye(eyeSpacing, eyeY, headSize * 0.13);
+            }
+            
+            // マズル
+            ctx.beginPath();
+            ctx.ellipse(-headSize * 0.08, headSize * 0.22, headSize * 0.12, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fillStyle = lightenColor(baseColor, 30);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(headSize * 0.08, headSize * 0.22, headSize * 0.12, headSize * 0.08, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // 鼻
+            ctx.beginPath();
+            ctx.moveTo(0, headSize * 0.12);
+            ctx.lineTo(-headSize * 0.05, headSize * 0.18);
+            ctx.lineTo(headSize * 0.05, headSize * 0.18);
+            ctx.closePath();
+            ctx.fillStyle = '#FFB61D';
+            ctx.fill();
+            
+            // 口（にっこり）
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(0, headSize * 0.2);
+            ctx.lineTo(-headSize * 0.08, headSize * 0.28);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(0, headSize * 0.2);
+            ctx.lineTo(headSize * 0.08, headSize * 0.28);
+            ctx.stroke();
+            
+            // ひげ
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 1;
+            for (let i = 0; i < 3; i++) {
+                ctx.beginPath();
+                ctx.moveTo(-headSize * 0.45, headSize * 0.15 + (i - 1) * 5);
+                ctx.lineTo(-headSize * 0.85, headSize * 0.12 + (i - 1) * 7);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(headSize * 0.45, headSize * 0.15 + (i - 1) * 5);
+                ctx.lineTo(headSize * 0.85, headSize * 0.12 + (i - 1) * 7);
+                ctx.stroke();
+            }
+            
+            // 頬
+            ctx.beginPath();
+            ctx.ellipse(-headSize * 0.38, headSize * 0.08, headSize * 0.1, headSize * 0.07, 0, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 150, 150, 0.4)';
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(headSize * 0.38, headSize * 0.08, headSize * 0.1, headSize * 0.07, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+            
+            // Lv.6以上: 首輪
+            if (level >= 6) {
+                drawCollar(x, y - headSize * 0.15 + walkBob, headSize * 0.8, level);
+            }
+            
+            // Lv.5以上: キラキラ
+            if (level >= 5) {
+                ctx.save();
+                ctx.translate(x, y - headSize * 0.6 + walkBob);
+                ctx.globalAlpha = 0.5 + (level - 5) * 0.1;
+                drawSparkles(headSize * 0.5 + (level - 5) * 0.08 * headSize);
+                ctx.restore();
+            }
+            
+            // Lv.9以上: オーラ
+            if (level >= 9) {
+                ctx.save();
+                ctx.globalAlpha = 0.2;
+                const auraGradient = ctx.createRadialGradient(x, y, headSize * 0.3, x, y, headSize * 2);
+                auraGradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+                auraGradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+                ctx.fillStyle = auraGradient;
+                ctx.beginPath();
+                ctx.ellipse(x, y, headSize * 2, headSize * 1.8, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            
+            // Lv.10以上: 王冠
+            if (level >= 10) {
+                drawCrown(x, y - headSize * 1.35 + walkBob);
+            }
+        }
+
         // 起きている猫を描画
         function drawAwakeCat(x, y, headSize, baseColor, accentColor, earInnerColor, level, expression, isBlinking, actionTimer, tailWag) {
             const bodyWidth = headSize * 0.7;
@@ -2369,6 +2619,22 @@
             // アクションアニメーションタイマー
             if (gameState.actionAnimation) {
                 gameState.actionTimer += deltaTime * 20;
+            }
+            
+            // 寝る/歩く切り替えタイマー（アクション中でない時のみ）
+            if (!gameState.actionAnimation) {
+                gameState.stateTimer += deltaTime;
+                
+                // 8秒ごとに状態を切り替え
+                if (gameState.stateTimer > 8) {
+                    gameState.stateTimer = 0;
+                    gameState.petState = (gameState.petState === 'sleeping') ? 'walking' : 'sleeping';
+                }
+                
+                // 歩行アニメーション更新
+                if (gameState.petState === 'walking') {
+                    gameState.walkCycle += deltaTime * 10;
+                }
             }
             
             // ステータス減少（deltaTimeベース）
