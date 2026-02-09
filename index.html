@@ -426,6 +426,11 @@
             color: #00160A;
         }
 
+        .btn-catnip {
+            background: linear-gradient(135deg, #a8e6cf, #88d8b0);
+            color: #00160A;
+        }
+
         .btn-icon {
             font-size: 1.5rem;
         }
@@ -671,6 +676,12 @@
                     tabindex="0">
                 <span class="btn-icon" aria-hidden="true">🎾</span>
                 <span>あそぶ</span>
+            </button>
+            <button class="action-btn btn-catnip" id="btnCatnip" 
+                    aria-label="またたびをあげる" 
+                    tabindex="0">
+                <span class="btn-icon" aria-hidden="true">🌿</span>
+                <span>またたび</span>
             </button>
         </div>
     </div>
@@ -2251,6 +2262,23 @@
             }
         }
 
+        // アクション：またたび
+        function catnip() {
+            if (gameState.actionAnimation) return;
+            
+            // げんきを1/3（約33）回復
+            gameState.energy = Math.min(100, gameState.energy + 33);
+            gameState.actionAnimation = 'pet';  // なでられた時と同じ表情
+            gameState.actionTimer = 0;
+            addExp(12);
+            
+            elements.petMessage.textContent = 'またたび〜♪ しあわせ〜';
+            
+            setTimeout(() => {
+                gameState.actionAnimation = null;
+            }, 1500);
+        }
+
         // ============================================
         // メインゲームループ
         // ============================================
@@ -2509,6 +2537,11 @@
                 playSfx('play');
             }
             play();
+        });
+        document.getElementById('btnCatnip').addEventListener('click', () => {
+            hapticFeedback('light');
+            catnip();
+            playSfx('pet');
         });
         document.getElementById('soundBtn').addEventListener('click', () => {
             hapticFeedback('light');
